@@ -1,0 +1,111 @@
+<ROSETTASCRIPTS>
+
+ 
+     <SCOREFXNS>
+       <ScoreFunction name="score12" weights="ref2015">
+          <Reweight scoretype="aa_composition" weight="1.0"/>
+          <Reweight scoretype="angle_constraint" weight="1"/>
+          <Reweight scoretype="dihedral_constraint" weight="1"/>
+        </ScoreFunction>
+     </SCOREFXNS>
+ 
+ 
+     <RESIDUE_SELECTORS>
+
+                   Chain name="chA" chain="A"/>
+                   <Index name="chA_ResiduesOfCore" resnums="9A,13A,16A,72A,75A,79A"/>
+                   <Index name="chB_ResiduesOfCore" resnums="9B,13B,16B,72B,75B,79B"/>
+                   <Index name="ResiduesOfCore" resnums="9A,13A,16A,72A,75A,79A,9B,13B,16B,72B,75B,79B"/>
+                   <Chain name="chA" chains="A"/>
+                   <Chain name="chB" chains="B"/>
+                   <Chain name="both_chains" chains="A,B"/>
+                 <ResiduePropertySelector name="Core_BindingSite" properties="HYDROPHOBIC" />
+               <And name="Complessivo" selectors="ResiduesOfCore,Core_BindingSite"/>
+              <Not name="not_coreresidues" selector="ResiduesOfCore" />
+    </RESIDUE_SELECTORS>
+ 
+    <SIMPLE_METRICS>
+       <InteractionEnergyMetric name="All_InteractionEnergy" include_rama_prepro_and_proclose="false" force_rescore="false" residue_selector="chA" residue_selector2="chB" scorefxn="score12" />
+       <InteractionEnergyMetric name="Core_InteractionEnergy" include_rama_prepro_and_proclose="false" force_rescore="false" residue_selector="chA_ResiduesOfCore" residue_selector2="chB_ResiduesOfCore" scorefxn="score12"/>
+       <SasaMetric name="SASA" residue_selector="ResiduesOfCore" sasa_metric_mode="all_sasa" />
+    </SIMPLE_METRICS> 
+
+    <TASKOPERATIONS>
+             <KeepSequenceSymmetry name="keep_seq_sym" setting="true" />
+             <RestrictToRepacking name="repackonly" />
+             <OperateOnResidueSubset name="repack" selector="not_coreresidues" >
+               <RestrictToRepackingRLT/>
+             </OperateOnResidueSubset>
+             <RestrictToResidueProperties name="hydrophobic_residues" properties="HYDROPHOBIC" selector="ResiduesOfCore" />
+     </TASKOPERATIONS>
+ 
+ 
+     <FILTERS>
+              EnergyPerResidue name="EnergyXresidueFilter" scorefxn="score12" whole_interface="1" jump_number="1" interface_distance_cutoff="6.0" bb_bb="1" whole_protein="0"/>
+              PackStat name="PackStatFilter" threshold="0.46" chain="0" repeats="3"/> 
+     </FILTERS>
+ 
+ 
+      <MOVERS>
+              
+        <AddOrRemoveMatchCsts name="SingleChAMatchCstsAdd" cst_instruction="add_new" cstfile="/home/ronnie1993/August2021/1_CoreRedesign_ChAMatched/DesignChA-HisHem/SingleChAHis_HEME.cst"/>
+              <EnzRepackMinimize name="Hem_into_Protein_opt" scorefxn_repack="score12" scorefxn_minimize="score12" cst_opt="1" design="0" repack_only="0" fix_catalytic="0" minimize_rb="1" minimize_bb="1" minimize_sc="1" minimize_lig="1" min_in_stages="1" backrub="0" cycles="5" task_operations="repackonly"/>
+              <EnzRepackMinimize name="Hem_into_Protein_des" scorefxn_repack="score12" scorefxn_minimize="score12" cst_opt="0" design="1" repack_only="0" fix_catalytic="1" minimize_rb="0" minimize_bb="1" minimize_sc="1" minimize_lig="1" min_in_stages="1" backrub="0" cycles="5" task_operations="repackonly"/>
+
+
+              <SetupForSequenceSymmetryMover name="setup_seq_sym" independent_regions="both_chains">
+                SequenceSymmetry residue_selectors="both_chains"/>
+                SequenceSymmetry residue_selectors="" />
+              </SetupForSequenceSymmetryMover>
+              PackRotamersMover name="pack" task_operations="keep_seq_sym" />
+              <AddCompositionConstraintMover name="CORE_A" selector="Complessivo">
+               <Comp entry="PENALTY_DEFINITION; PROPERTIES AROMATIC; NOT_PROPERTIES POLAR CHARGED; FRACTION 0.1;PENALTIES 1 0 1; DELTA_START -1; DELTA_END 1; BEFORE_FUNCTION LINEAR; AFTER_FUNCTION LINEAR; END_PENALTY_DEFINITION;" />            
+              </AddCompositionConstraintMover>
+              <AddCompositionConstraintMover name="CORE_B" selector="Complessivo">
+                <Comp entry="PENALTY_DEFINITION; PROPERTIES AROMATIC; NOT_PROPERTIES POLAR CHARGED; FRACTION 0.1;PENALTIES 1 0 1; DELTA_START -1; DELTA_END 1; BEFORE_FUNCTION LINEAR; AFTER_FUNCTION LINEAR; END_PENALTY_DEFINITION;" />
+              </AddCompositionConstraintMover>
+
+              <FastDesign name="DesignConstraints" scorefxn="score12" task_operations="keep_seq_sym,hydrophobic_residues,repack"/>
+
+              
+              <ParsedProtocol name="Step1_BindingPocketDesign" mode="sequence">
+                <Add mover="CORE_A"/>
+                <Add mover="CORE_B"/>
+                <Add mover="DesignConstraints"/>
+                Add filter="PackStatFilter"/>
+                Add filter="EnergyXresidueFilter"/>
+              </ParsedProtocol>
+
+              <InterfaceAnalyzerMover name="InterfaceAnalysis" scorefxn="score12" interface_sc="true" packstat="true" interface="AX_B" scorefile_reporting_prefix="IAM"/> 
+              
+              <RunSimpleMetrics name="All_InteractionEnergy_Metric" metrics="All_InteractionEnergy" prefix="m1_ALL_InteractionEnergy_"/>
+              <RunSimpleMetrics name="Core_InteractionEnergy_Metric" metrics="Core_InteractionEnergy" prefix="m1_CORE_InteractionEnergy_"/>
+              <RunSimpleMetrics name="SASAEnergyMetric" metrics="SASA" prefix="m2_SASAEnergy_"/> 
+              
+      </MOVERS>
+ 
+ 
+      <APPLY_TO_POSE>
+      </APPLY_TO_POSE>
+ 
+ 
+      <PROTOCOLS>
+        <Add mover="SingleChAMatchCstsAdd"/>
+        <Add mover="Hem_into_Protein_opt"/>
+        <Add mover="Hem_into_Protein_des"/>
+              <Add mover="setup_seq_sym"/>
+              Add mover="pack"/>
+              Add mover="Step1_BindingPocketDesign"/>
+              Add mover="SingleChAMatchCstsAdd"/>
+              Add mover="Hem_into_Protein_opt"/>
+               -Add mover="CORE"/>
+               -Add mover="DesignConstraints"/>
+               -Add filter="EnergyXresidue"/>
+              <Add mover="InterfaceAnalysis"/>
+              <Add mover="All_InteractionEnergy_Metric"/>
+              <Add mover="Core_InteractionEnergy_Metric"/>
+              <Add mover="SASAEnergyMetric"/>
+      </PROTOCOLS>
+ 
+ </ROSETTASCRIPTS>
+
