@@ -1,0 +1,25 @@
+-run::preserve_header
+#extra_res_fa /home/veronica/DATI_SU_CLUSTER/April2021/6_ReDesign_Trunc4/e_FinalSteps/HEM.params
+#extra_res_path /work/oberdogu/xylose_reductase/lig/test_new_mol2/
+#correct
+-in::ignore_unrecognized_res
+-enzdes::minimize_ligand_torsions 5.0
+-enzdes::detect_design_interface
+-enzdes::cut1 6.0
+-enzdes::cut2 8.0
+-enzdes::cut3 10.0
+-enzdes::cut4 12.0
+#enzdes::cstfile  /Users/veronica/Cluster/HEME_PUT_BACK/HEMEBACK_In_Truncated/constraints_file.cst
+#mute core.io.database
+#score:weights /work/oberdogu/minirosetta_database/scoring/weights/enzdes.wts
+-packing::use_input_sc
+#packing::no_optH false
+#-packing::resfile resfile
+-packing::extrachi_cutoff 1
+-packing::ex1
+-packing::ex2
+-linmem_ig 10
+#-ligand::old_estat
+#enzdes::lig_packer_weight 1.5
+#jd2:enzdes_out
+#enzdes::enz_debug
