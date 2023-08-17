@@ -1,0 +1,31 @@
+-packing
+ -ex1 
+ -ex2 
+ -ex2aro
+ -ex1aro
+ -extrachi_cutoff 0
+ -use_input_sc
+#-match:filter_colliding_upstream_residues
+#-match:filter_upstream_downstream_collisions
+#-match:updown_collision_tolerance 0.3  
+# The bump_tolerance is computed by using two radii (j and i ) and if false the atom is 
+# not colliding with the backbone -> ( ri + rj - t )
+#-match::bump_tolerance 0.3  
+#-in:ignore_unrecognized_res
+#  by what criterion matches are clustered by the CloudPDB writer or the consolidator
+# DS = downstream object
+-match:match_grouper SameSequenceAndDSPositionGrouper 
+#-match:euclid_bin_size 1.0
+#-match:euler_bin_size  15.0
+#-out::file::output_virtual
+-match:output_matches_per_group 1
+-match:euclid_bin_size 2.0 
+-match:euler_bin_size 20.0
+#-match:bump_tolerance 0.3 
+#-match:output_format PDB 
+-match:consolidate_matches true
+#-match:output_matchres_only
+-match:only_enumerate_non_match_redundant_ligand_rotamers true
+#-match:output_format PDB
+-match:grouper_downstream_rmsd 5
+

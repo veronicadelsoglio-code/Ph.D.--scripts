@@ -1,0 +1,44 @@
+ <ROSETTASCRIPTS>
+
+   <SCOREFXNS>
+     <ScoreFunction name="score12" weights="ref2015" >
+         <Reweight scoretype="atom_pair_constraint" weight="1"/>
+         <Reweight scoretype="angle_constraint" weight="1"/>
+         <Reweight scoretype="dihedral_constraint" weight="1"/>
+      </ScoreFunction>  
+ </SCOREFXNS>
+
+   <RESIDUE_SELECTORS>
+	   Chain name="chB" chains="B"/>
+                <Index name="H12_A" resnums="12"/>
+                And name="H12_ChB" selectors="chB,H12_B"/>
+   </RESIDUE_SELECTORS>
+
+   <TASKOPERATIONS>
+	   <RestrictToRepacking name="repackonly" />
+   </TASKOPERATIONS>
+
+
+  <FILTERS>
+   </FILTERS>
+
+   <MOVERS>
+	   <MutateResidue name="HIS12_ChA" residue_selector="H12_A" new_res="HIS_D" preserve_atom_coords="true" mutate_self="false" />
+	   MutateResidue name="HIS12" residue_selector="H12" new_res="HIS_D" preserve_atom_coords="true" />
+	   <AddOrRemoveMatchCsts name="cstadd" cst_instruction="add_new" cstfile="/home/veronica/Cluster/September2021/2_HEME-HIS_WELL_ALIGNED/SingleCST_2h88.cst"/> 
+	   <EnzRepackMinimize name="Hem_into_Protein_opt" scorefxn_repack="score12" scorefxn_minimize="score12" cst_opt="1" design="0" repack_only="0" fix_catalytic="0" minimize_rb="1" minimize_bb="1" minimize_sc="1" minimize_lig="1" min_in_stages="1" backrub="0" cycles="5" task_operations="repackonly"/>
+           <EnzRepackMinimize name="Hem_into_Protein_des" scorefxn_repack="score12" scorefxn_minimize="score12" cst_opt="0" design="1" repack_only="0" fix_catalytic="1" minimize_rb="0" minimize_bb="1" minimize_sc="1" minimize_lig="1" min_in_stages="1" backrub="0" cycles="5" task_operations="repackonly"/>
+   </MOVERS>
+
+   <APPLY_TO_POSE>
+   </APPLY_TO_POSE>
+
+   <PROTOCOLS>
+           Add mover="HIS12_ChA"/>
+	   <Add mover="cstadd"/>
+           <Add mover="Hem_into_Protein_opt"/>
+           <Add mover="Hem_into_Protein_des"/>
+   </PROTOCOLS>
+
+ </ROSETTASCRIPTS>
+
