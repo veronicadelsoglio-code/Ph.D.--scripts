@@ -80,12 +80,12 @@ The Matcher execution was performed with the command:
 /rosetta/main/source/bin/match.linuxgccrelease -s PDBFILE.pdb -match:lig_name HEM -match:geometric_constraint_file CST_file.cst -match:scaffold_active_site_residues_for_ geomcsts Posfile.pos -match::enumerate_ligand_rotamers false @enzflags
 
 Once the Matching run confirmed the HEM coordination can be feased, the position of the ligand was fixed. To this purpose, a RosettaScript script was run. The ligand coordinating HIS residues were mutated in not-protonated residues using the MutateResidue mover. Subsequently, the AddOrRemoverMatchCsts and EnzRepackMinimize movers favoured the incorporation of the geometric CST into the pose, followed by the design/repack and minimization of the protein-ligand interface. The files used to perform the run were: Rosetta.xml script, HEM.params file, CST file, enzflag file. The command used to run the RosettaScript script was:
-(Run command 7) /ROSETTA/main/source/bin/rosetta.script.linuxgccrelease - s input.pdb -parser:protocol FinalDesign.xml -extra_res_fa HEM.params -match:geometric_constraint_file CST_file.cst @enzflags
+(Run command 7) /ROSETTA/main/source/bin/rosetta.script.linuxgccrelease - s input.pdb -parser:protocol FinalDesign.xml -extra_res_fa HEM.params -match:geometric_constraint_file CST_file.cst @flags
 
 The score of the output structure were evaluated.
 
 
-+++ (files used: HEM.mol2, HEM.params, FinalDesign.xml, CST_file.cst, enzflags (used in the previous step), Posfile.pos)
++++ (files used: HEM.mol2, HEM.params, FinalDesign.xml, CST_file.cst, flags, Posfile.pos)
 
 
 
