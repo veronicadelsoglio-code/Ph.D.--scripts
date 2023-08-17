@@ -1,0 +1,39 @@
+ <ROSETTASCRIPTS>
+
+   <SCOREFXNS>
+     <ScoreFunction name="score12" weights="ref2015" />
+   </SCOREFXNS>
+
+   <RESIDUE_SELECTORS>
+	   Chain name="chA" chains="A"/>
+	   Index name="Glu39" resnums="39"/>
+	   Index name="Asp13" resnums="13"/>
+	   Index name="Ile15" resnums="15"/>
+	   Index name="Ile16" resnums="16"/>
+	   Index name="Trp19" resnums="19"/>
+
+   </RESIDUE_SELECTORS>
+
+   <TASKOPERATIONS>
+      <ReadResfile name="ReadRes" filename="Resfile" />
+	   RestrictToSpecifiedBaseResidueTypes name="Mutation" base_types="ASP,ASP" selector="Lys2,Asp13" />
+	   ResfileCommandOperation name="Mutation" command="A NATAA D" residue_selector="Lys2" />
+   </TASKOPERATIONS>
+
+
+  <FILTERS>
+   </FILTERS>
+
+   <MOVERS>
+	   <FastDesign name="ChMutation" scorefxn="score12" task_operations="ReadRes"/>
+ </MOVERS>
+
+   <APPLY_TO_POSE>
+   </APPLY_TO_POSE>
+
+   <PROTOCOLS>
+	   <Add mover="ChMutation"/>
+   </PROTOCOLS>
+
+ </ROSETTASCRIPTS>
+

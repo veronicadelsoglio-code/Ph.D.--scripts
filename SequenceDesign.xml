@@ -1,0 +1,45 @@
+ <ROSETTASCRIPTS>
+
+   <SCOREFXNS>
+      <ScoreFunction name="scorfxn" weights="ref2015" />
+      <ScoreFunction name="pack_score" weights="ref2015" >
+	      <Reweight scoretype="pro_close" weight="0.0" />
+	      <Reweight scoretype="cart_bonded" weight="0.625" />
+      </ScoreFunction>
+   </SCOREFXNS>
+
+   <RESIDUE_SELECTORS>
+	   <Chain name="chA" chains="A"/>	   
+	   <Index name="all" resnums="1-92"/> 
+     Not name="NotHis"/>
+   </RESIDUE_SELECTORS>
+
+   <TASKOPERATIONS>
+	   RestrictToRepacking name="repackonly" />
+          ExtraRotamersGeneric name="extrachi" ex1="1" ex2="1" ex1_sample_level="1" ex2_sample_level="1" />
+   </TASKOPERATIONS>
+
+
+   <FILTERS>
+   </FILTERS>
+
+   <MOVERS>
+	   TaskAwareMinMover name="min" bb="0" chi="1" jump="1" scorefxn="refi2015" tolerance="0.01" max_iter="200" task_operations="extrachi,repackonly"/>
+     MinMover name="min_torsion" scorefxn="ReDesign" chi="true" bb="1" cartesian="F" >
+     /MinMover>
+     MinMover name="min_cart" scorefxn="r15_cart" chi="true" bb="1" cartesian="T" >
+     /MinMover>
+     <PackRotamersMover name="Redesign_Structure" scorefxn="scorfxn" />
+   </MOVERS>
+
+   <APPLY_TO_POSE>
+   </APPLY_TO_POSE>
+
+   <PROTOCOLS>
+	   
+	   <Add mover="Redesign_Structure"/>
+         
+   </PROTOCOLS>
+
+ </ROSETTASCRIPTS>
+

@@ -1,0 +1,13 @@
+##database /home/biochemistry/Rosetta/main/database 
+-in:file:s /home/ronnie1993/April2021_Truncated/Trunc_4/ChA_Structure4_afterREMODEL_AFTERFASTDESIGN.pdb
+-nstruct 100
+#out:file:silent /home/ronnie1993/March2021/Truncated_1_29032021/PackRotamer_100runs/silent.out 
+-parser:protocol /home/ronnie1993/April2021_Truncated/Trunc_4/PackRot_script.xml
+#extra_res_fa /home/ronnie1993/March2021/Truncated_1_29032021/PackRotamer_100runs/HEM.params 
+#packing:linmem_ig 10
+#ex1
+#ex2
+#ex1aro
+#ex2aro
+#multi_cool_annealer 10 
+#beta
